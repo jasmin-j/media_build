@@ -7,6 +7,13 @@ function disable_opt {
 		v4l/.config
 }
 
+function set_opt_value {
+	echo Setting ${1} to ${2}
+	sed -i \
+		-e s/${1}=.*/${1}=${2}/ \
+		v4l/.config
+}
+
 if [ $# -lt 1 ] ; then
 	echo "Usage: $0 <kernelsourcedir>"
 	exit 1
@@ -27,5 +34,6 @@ disable_opt CONFIG_VIDEOBUF2_MEMOPS
 disable_opt CONFIG_FRAME_VECTOR
 disable_opt CONFIG_DVB_AF9033
 disable_opt CONFIG_VIDEO_ET8EK8
+set_opt_value CONFIG_DVB_MAX_ADAPTERS 32
 
 make -j3
