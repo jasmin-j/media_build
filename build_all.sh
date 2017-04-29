@@ -21,6 +21,11 @@ fi
 
 echo Running full media_build for kernel sources at ${1}
 
+if [ -n ${VER} ] ; then
+	# generate first ./v4l/.version, which is used by all other scripts
+	make VER=${VER} release
+fi
+
 cd linux
 make tar DIR=../${1}
 make untar
