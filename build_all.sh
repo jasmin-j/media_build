@@ -66,7 +66,7 @@ fi
 
 echo Running full media_build for kernel sources at ${1}
 
-if [ -n ${VER} -a "${do_clean}" != "y" ] ; then
+if [ -n "${VER}" -a "${do_clean}" != "y" ] ; then
 	# generate first ./v4l/.version, which is used by all other scripts
 	make VER=${VER} release
 fi
