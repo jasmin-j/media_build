@@ -1,8 +1,11 @@
 #!/bin/bash
 
 function usage {
-	echo "Usage: $0 <kernelsourcedir> [-c]"
+	echo "Usage: $0 <kernelsourcedir> [-c][-l][-v][--help]"
 	echo "  -c .. clean"
+	echo "  -l .. make linux"
+	echo "  -v .. make v4l"
+	echo " Note: If -l and -v are not present, both are executed."
 	exit 1
 }
 
@@ -56,12 +59,49 @@ function make_v4l {
 if [ $# -lt 1 ] ; then
 	usage
 fi
+
 if [ "${1}" = "-c" ] ; then
 	usage
 fi
 
-if [ "${2}" = "-c" ] ; then
+if [ "${1}" = "--help" ] ; then
+	usage
+fi
+
+kernelsourcedir=${1}
+shift
+
+do_linux="d"
+do_v4l="d"
+
+if [ "${1}" = "-l" ] ; then
+	do_linux="y"
+	do_v4l="n"
+	shift
+fi
+
+if [ "${1}" = "-v" ] ; then
+	do_v4l="y"
+	if [ "${do_linux}" = "d" ] ; then
+		do_linux="n"
+	fi
+	shift
+fi
+
+if [ "${1}" = "-c" ] ; then
 	do_clean="y"
+	do_linux="d"
+	do_v4l="d"
+	shift
+fi
+
+# needs to be last
+if [ "${1}" = "--help" ] ; then
+	usage
+fi
+
+if [ $# -gt 0 ] ; then
+	usage
 fi
 
 echo Running full media_build for kernel sources at ${1}
@@ -71,5 +111,10 @@ if [ -n "${VER}" -a "${do_clean}" != "y" ] ; then
 	make VER=${VER} release
 fi
 
-make_linux ${1}
-make_v4l
+if [ "${do_linux}" = "y" -o "${do_linux}" = "d" ] ; then
+	make_linux ${kernelsourcedir}
+fi
+
+if [ "${do_v4l}" = "y" -o "${do_v4l}" = "d" ] ; then
+	make_v4l
+fi
