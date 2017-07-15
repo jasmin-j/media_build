@@ -217,7 +217,7 @@ endif
 ifeq ($(makefile-media),1)
 INSTALLDEPS += media-install
 endif
-modules_install install:: $(INSTALLDEPS) firmware_install
+modules_install install:: $(INSTALLDEPS)
 
 remove rminstall:: media-rminstall
 
