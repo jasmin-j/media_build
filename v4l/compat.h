@@ -2072,7 +2072,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
 }
 #endif
 
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 12, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 13, 0)
 static inline void *skb_put_data(struct sk_buff *skb, const void *data,
 				 unsigned int len)
 {
