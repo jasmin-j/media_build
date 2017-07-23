@@ -2072,4 +2072,31 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
 }
 #endif
 
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 12, 0)
+static inline void *skb_put_data(struct sk_buff *skb, const void *data,
+				 unsigned int len)
+{
+	void *tmp = skb_put(skb, len);
+
+	memcpy(tmp, data, len);
+
+	return tmp;
+}
+#endif
+
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 4, 0)
+static inline int pm_runtime_get_if_in_use(struct device *dev)
+{
+	unsigned long flags;
+	int retval;
+
+	spin_lock_irqsave(&dev->power.lock, flags);
+	retval = dev->power.disable_depth > 0 ? -EINVAL :
+		dev->power.runtime_status == RPM_ACTIVE
+			&& atomic_inc_not_zero(&dev->power.usage_count);
+	spin_unlock_irqrestore(&dev->power.lock, flags);
+	return retval;
+}
+#endif
+
 #endif /*  _COMPAT_H */
