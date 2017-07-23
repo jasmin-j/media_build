@@ -1,11 +1,12 @@
 #!/bin/bash
 
 function usage {
-	echo "Usage: $0 <kernelsourcedir> [-c][-l][-v][--help]"
+	echo "Usage: $0 <kernelsourcedir> [-l][-v][-c][--help]"
 	echo "  -c .. clean"
 	echo "  -l .. make linux"
 	echo "  -v .. make v4l"
 	echo " Note: If -l and -v are not present, both are executed."
+	echo "       The order of the options needs to be as written above."
 	exit 1
 }
 
