@@ -1,12 +1,15 @@
 #!/bin/bash
 
 function usage {
-	echo "Usage: $0 <kernelsourcedir> [-l][-v][-c][--help]"
-	echo "  -c .. clean"
-	echo "  -l .. make linux"
-	echo "  -v .. make v4l"
+	echo "Usage: $0 <kernelsourcedir> [-l][-v][-c][-db][-dc][--help]"
+	echo "  -c ... clean"
+	echo "  -l ... make linux"
+	echo "  -v ... make v4l"
+	echo "  -db .. DKMS build"
+	echo "  -dc .. DKMS clean"
 	echo " Note: If -l and -v are not present, both are executed."
 	echo "       The order of the options needs to be as written above."
+	echo "       If -db or -dc are present, -c, -l and -v are ignored."
 	exit 1
 }
 
@@ -42,11 +45,13 @@ function make_linux {
 	cd linux
 
 	if [ "${do_clean}" = "y" ] ; then
-		make distclean
+		make ${linux_clean}
 		# mm remains, should be reportded to media_build maintainers
 		rm -rf mm
 	else
-		make tar DIR=../${1}
+		if [ "${do_dkms}" != "y" ] ; then
+			make tar DIR=../${1}
+		fi
 		make untar
 	fi
 
@@ -70,7 +75,7 @@ function import_options {
 
 function make_v4l {
 	if [ "${do_clean}" = "y" ] ; then
-		make distclean
+		make ${v4l_clean}
 	else
 		make stagingconfig
 
@@ -99,6 +104,9 @@ job_num=$(( nProc + 1 ))
 kernelsourcedir=${1}
 shift
 
+linux_clean="distclean"
+v4l_clean="distclean"
+do_dkms="d"
 do_linux="d"
 do_v4l="d"
 
@@ -120,6 +128,24 @@ if [ "${1}" = "-c" ] ; then
 	do_clean="y"
 	do_linux="d"
 	do_v4l="d"
+	shift
+fi
+
+if [ "${1}" = "-db" ] ; then
+	do_clean="n"
+	do_linux="d"
+	do_v4l="d"
+	do_dkms="y"
+	shift
+fi
+
+if [ "${1}" = "-dc" ] ; then
+	do_clean="y"
+	do_linux="d"
+	do_v4l="d"
+	# keep the linux tree tar.bz2 file
+	linux_clean="clean"
+	do_dkms="y"
 	shift
 fi
 
