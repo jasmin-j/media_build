@@ -17,6 +17,20 @@ function disable_opt {
 		v4l/.config
 }
 
+function set_opt_y {
+	echo Enabling Y ${1}
+	sed -i \
+		-e s/#\ ${1}\ is\ not\ set/${1}=y/ \
+		v4l/.config
+}
+
+function set_opt_m {
+	echo Enabling M ${1}
+	sed -i \
+		-e s/#\ ${1}\ is\ not\ set/${1}=m/ \
+		v4l/.config
+}
+
 function set_opt_value {
 	echo Setting ${1} to ${2}
 	sed -i \
@@ -39,17 +53,28 @@ function make_linux {
 	cd ..
 }
 
+function import_options {
+	# we need the list sorted according to the number prefix
+	inc_files=$(find . -name "*.inc"  | sort -u)
+	if [ -n "${inc_files}" ] ; then
+		for incfile in ${inc_files} ; do
+			# we allow only the functions we define in this script
+			rm -f ${incfile}.tmp
+			sed -n -e '/^disable_opt/p' -e '/^set_opt_y/p' -e '/^set_opt_m/p' \
+			       -e '/^set_opt_value/p' ${incfile} > ${incfile}.tmp
+			source ${incfile}.tmp
+			rm ${incfile}.tmp
+		done
+	fi
+}
+
 function make_v4l {
 	if [ "${do_clean}" = "y" ] ; then
 		make distclean
 	else
 		make stagingconfig
 
-		disable_opt CONFIG_DVB_DEMUX_SECTION_LOSS_LOG
-		disable_opt CONFIG_DVB_DDBRIDGE_MSIENABLE
-		disable_opt CONFIG_VIDEOBUF2_MEMOPS
-		disable_opt CONFIG_FRAME_VECTOR
-		set_opt_value CONFIG_DVB_MAX_ADAPTERS 32
+		import_options
 
 		make -j${job_num}
 	fi
