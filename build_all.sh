@@ -110,6 +110,19 @@ do_dkms="d"
 do_linux="d"
 do_v4l="d"
 
+# Some DKMS version might need to override jobs, so checking
+# for an environment variable JOBS
+if [ -n "${JOBS}" ] ; then
+	# JOBS need to be numeric
+	case ${JOBS} in
+		'' | *[!0-9]*)
+			echo "Error: ENV Variable 'JOBS' ins not numeric!"
+			exit 2
+			;;
+	esac
+	job_num=${JOBS}
+fi
+
 if [ "${1}" = "-l" ] ; then
 	do_linux="y"
 	do_v4l="n"
