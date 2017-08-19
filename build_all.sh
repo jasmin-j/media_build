@@ -97,9 +97,9 @@ function make_v4l {
 		if [ "${do_dkms}" = "y" ] ; then
 			if [ ! -d "${dkms_inst_dir}" ] ; then
 				make DESTDIR=${dkms_inst_dir} install
-				if [ $! -eq 0 ] ; then
+				if [ $? -eq 0 ] ; then
 					# additional security to be sure we remove the right directory
-					# with option -dc
+					# when cleaning (option -dc)
 					rm -rf ${dkms_inst_dir}/DKMS_INST
 					date -R > ${dkms_inst_dir}/DKMS_INST
 				fi
