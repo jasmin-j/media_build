@@ -28,7 +28,7 @@ mod_idx=0
 module_copy_script_name="mod_copy.sh"
 module_copy_script="${module_copy_script_name}"
 
-mod_build_loc="${mod_build_loc_base}"
+mod_build_loc=""
 
 function exit_print {
     if [ -z "${2}" ] ; then
@@ -113,7 +113,7 @@ if [ ! -d ${module_dir} ] ; then
 fi
 
 # Check if the media build has been installed the new modules
-if [ ! -d ${media_inst_dir} ] ; then
+if [ ! -d ${media_inst_dir} -a -f "${media_inst_dir}/DKMS_INST" ] ; then
 	err_exit "Installed media build modules not found in ${media_inst_dir}!" ${err_dir_not_found}
 fi
 
@@ -125,7 +125,7 @@ if [ ! -d ${dkms_dyn_conf_dir=} ] ; then
 fi
 
 module_copy_script="${dkms_dyn_conf_dir}/${module_copy_script_name}"
-mod_build_loc="${media_inst_dir}${mod_build_loc_base}"
+mod_build_loc="${media_inst_dir}"
 
 # we generate it always new
 rm -f ${dkms_dyn_conf}
