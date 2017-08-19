@@ -199,7 +199,21 @@ if [ $# -gt 0 ] ; then
 	usage
 fi
 
-echo Running full media_build for kernel sources at ${1}
+if [ "${do_dkms}" != "y" ] ; then
+	txt_body="for kernel sources at ${kernelsourcedir}"
+	txt_dkms=""
+else
+	txt_body="with installation path ${kernelsourcedir}"
+	txt_dkms="DKMS: "
+fi
+
+if [ "${do_clean}" != "y" ] ; then
+	txt_start="${txt_dkms}Running media build ${txt_body}"
+else
+	txt_start="${txt_dkms}Cleaning media build"
+fi
+
+echo "${txt_start}"
 
 if [ -n "${VER}" -a "${do_clean}" != "y" ] ; then
 	# generate first ./v4l/.version, which is used by all other scripts
