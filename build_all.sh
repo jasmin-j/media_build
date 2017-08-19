@@ -9,7 +9,8 @@ function usage {
 	echo "  -dc .. DKMS clean"
 	echo " Note: If -l and -v are not present, both are executed."
 	echo "       The order of the options needs to be as written above."
-	echo "       If -db or -dc are present, -c, -l and -v are ignored."
+	echo "       If -db or -dc are present, -c, -l and -v are ignored and"
+	echo "       <kernelsourcedir> is used as the installation path."
 	exit 1
 }
 
@@ -76,12 +77,37 @@ function import_options {
 function make_v4l {
 	if [ "${do_clean}" = "y" ] ; then
 		make ${v4l_clean}
+
+		if [ -d "${dkms_inst_dir}" -a "${do_dkms}" = "y" ] ; then
+			# additional security to be sure we remove the right directory
+			if [ -f "${dkms_inst_dir}/DKMS_INST" ] ; then
+				rm -rf ${dkms_inst_dir}
+			else
+				echo "Error: '${dkms_inst_dir}' is no DKMS install path!"
+				exit 4
+			fi
+		fi
 	else
 		make stagingconfig
 
 		import_options
 
 		make -j${job_num}
+
+		if [ "${do_dkms}" = "y" ] ; then
+			if [ ! -d "${dkms_inst_dir}" ] ; then
+				make DESTDIR=${dkms_inst_dir} install
+				if [ $! -eq 0 ] ; then
+					# additional security to be sure we remove the right directory
+					# with option -dc
+					rm -rf ${dkms_inst_dir}/DKMS_INST
+					date -R > ${dkms_inst_dir}/DKMS_INST
+				fi
+			else
+				echo "Error: DKMS install path '${dkms_inst_dir}' already exists!"
+				exit 3
+			fi
+		fi
 	fi
 }
 
@@ -149,6 +175,7 @@ if [ "${1}" = "-db" ] ; then
 	do_linux="d"
 	do_v4l="d"
 	do_dkms="y"
+	dkms_inst_dir="${kernelsourcedir}"
 	shift
 fi
 
@@ -159,6 +186,7 @@ if [ "${1}" = "-dc" ] ; then
 	# keep the linux tree tar.bz2 file
 	linux_clean="clean"
 	do_dkms="y"
+	dkms_inst_dir="${kernelsourcedir}"
 	shift
 fi
 
