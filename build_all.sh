@@ -51,7 +51,7 @@ function make_v4l {
 		disable_opt CONFIG_FRAME_VECTOR
 		set_opt_value CONFIG_DVB_MAX_ADAPTERS 32
 
-		make -j3
+		make -j${job_num}
 	fi
 }
 
@@ -66,6 +66,10 @@ fi
 if [ "${1}" = "--help" ] ; then
 	usage
 fi
+
+# determine num of available cores for make job control
+nProc=$(getconf _NPROCESSORS_ONLN)
+job_num=$(( nProc + 1 ))
 
 kernelsourcedir=${1}
 shift
