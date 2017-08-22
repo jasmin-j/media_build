@@ -40,6 +40,7 @@ VIDEO_OV5670
 # needs ktime_t as s64
 CEC_PIN
 IR_GPIO_TX
+RC_CORE
 
 [4.7.0]
 # needs i2c_mux_alloc
