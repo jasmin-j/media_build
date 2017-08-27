@@ -39,7 +39,6 @@ VIDEO_XILINX
 VIDEO_OV5670
 # needs ktime_t as s64
 CEC_PIN
-IR_GPIO_TX
 
 [4.7.0]
 # needs i2c_mux_alloc
@@ -98,6 +97,7 @@ VIDEO_COBALT
 [3.13.0]
 # needs gpio/consumer.h
 RADIO_SI4713
+IR_GPIO_TX
 
 [3.12.0]
 # BIN_ATTR_RW was changed
