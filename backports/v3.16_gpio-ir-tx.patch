@@ -1,0 +1,25 @@
+diff --git a/drivers/media/rc/gpio-ir-tx.c b/drivers/media/rc/gpio-ir-tx.c
+index cd476ca..f48aba2 100644
+--- a/drivers/media/rc/gpio-ir-tx.c
++++ b/drivers/media/rc/gpio-ir-tx.c
+@@ -136,13 +136,19 @@ static int gpio_ir_tx_probe(struct platform_device *pdev)
+ 	if (!rcdev)
+ 		return -ENOMEM;
+ 
+-	gpio_ir->gpio = devm_gpiod_get(&pdev->dev, NULL, GPIOD_OUT_LOW);
++	gpio_ir->gpio = devm_gpiod_get(&pdev->dev, NULL);
+ 	if (IS_ERR(gpio_ir->gpio)) {
+ 		if (PTR_ERR(gpio_ir->gpio) != -EPROBE_DEFER)
+ 			dev_err(&pdev->dev, "Failed to get gpio (%ld)\n",
+ 				PTR_ERR(gpio_ir->gpio));
+ 		return PTR_ERR(gpio_ir->gpio);
+ 	}
++	rc = gpiod_direction_output(gpio_ir->gpio, 0);
++	if (!rc) {
++		dev_err(&pdev->dev, "Failed to set output direction(%d)\n", rc);
++		gpiod_put(gpio_ir->gpio);
++		return rc;
++	}
+ 
+ 	rcdev->priv = gpio_ir;
+ 	rcdev->driver_name = DRIVER_NAME;
