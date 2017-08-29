@@ -1,0 +1,30 @@
+
+    DKMS support description
+
+This file describes how to create a media-build DKMS package.
+
+This branch of media_build contains the scripts for the media_build DKMS
+support.
+It requires a media-tree to be used by the resulting DKMS package. In principle
+the DKMS support scripts can use any existing media-tree and use it. To get
+reproducable results for distributions, we need a stable media-tree. Thus
+there are branches available in 
+   https://github.com/jasmin-j/dddvb-linux-kernel
+Please ha a loog to README_dkms there for details about the naming scheme
+of this branches.
+
+First checkout the branch you want to create a DKMS from.
+
+Then create the "linux-media.tar.bz2" archive out of the existing Kernel
+tree. This can be easily done by:
+   ./build_all.sh <kernelsourcedir> -dt
+<kernelsourcedir> needs to point to your linux-media tree.
+
+
+<FIXME>
+
+
+The files "??_any_name.inc" are included by "build_all.sh" and can be used to
+set/clear Kernel options and parameters. This is intended for distributions
+which may add new files according to their needs.
+
