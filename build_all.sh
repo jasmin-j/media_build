@@ -55,6 +55,8 @@ function make_linux {
 
 		if [ "${do_tar}" == "y" ] ; then
 			make tar DIR=../${1}
+			rm -f git_log
+			rm -f kernel_version.h
 		fi
 	else
 		if [ "${do_dkms}" != "y" ] ; then
