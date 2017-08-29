@@ -1,16 +1,19 @@
 #!/bin/bash
 
 function usage {
-	echo "Usage: $0 <kernelsourcedir> [-l][-v][-c][-db][-dc][--help]"
+	echo "Usage: $0 <kernelsourcedir> [-l][-v][-c][-db][-dc][-dt][--help]"
 	echo "  -c ... clean"
 	echo "  -l ... make linux"
 	echo "  -v ... make v4l"
 	echo "  -db .. DKMS build"
 	echo "  -dc .. DKMS clean"
+	echo "  -dt .. DKMS TAR"
 	echo " Note: If -l and -v are not present, both are executed."
-	echo "       The order of the options needs to be as written above."
+	echo "       The order of the options needs to be as written above!"
 	echo "       If -db or -dc are present, -c, -l and -v are ignored and"
 	echo "       <kernelsourcedir> is used as the installation path."
+	echo "       If -dt is present, all other options are ignored. This will"
+	echo "       do implicite -c and then create the TAR archive."
 	exit 1
 }
 
@@ -49,6 +52,10 @@ function make_linux {
 		make ${linux_clean}
 		# mm remains, should be reportded to media_build maintainers
 		rm -rf mm
+
+		if [ "${do_tar}" == "y" ] ; then
+			make tar DIR=../${1}
+		fi
 	else
 		if [ "${do_dkms}" != "y" ] ; then
 			make tar DIR=../${1}
@@ -115,11 +122,8 @@ if [ $# -lt 1 ] ; then
 	usage
 fi
 
-if [ "${1}" = "-c" ] ; then
-	usage
-fi
-
-if [ "${1}" = "--help" ] ; then
+# matches "--help" also
+if [[ ${1} =~ ^-.* ]] ; then
 	usage
 fi
 
@@ -135,6 +139,7 @@ v4l_clean="distclean"
 do_dkms="d"
 do_linux="d"
 do_v4l="d"
+do_tar="d"
 
 # Some DKMS version might need to override jobs, so checking
 # for an environment variable JOBS
@@ -190,6 +195,18 @@ if [ "${1}" = "-dc" ] ; then
 	shift
 fi
 
+if [ "${1}" = "-dt" ] ; then
+	do_clean="y"
+	do_linux="d"
+	do_v4l="d"
+	do_dkms="d"
+	do_tar="y"
+	# default might be overridden already
+	linux_clean="distclean"
+	v4l_clean="distclean"
+	shift
+fi
+
 # needs to be last
 if [ "${1}" = "--help" ] ; then
 	usage
@@ -200,6 +217,11 @@ if [ $# -gt 0 ] ; then
 fi
 
 if [ "${do_dkms}" != "y" ] ; then
+	if [ ! -d ${kernelsourcedir} ] ; then
+		echo "Error: Kernel source dir '${kernelsourcedir}' does not exist!"
+		exit 5
+	fi
+
 	txt_body="for kernel sources at ${kernelsourcedir}"
 	txt_dkms=""
 else
