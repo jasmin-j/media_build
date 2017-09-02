@@ -3,6 +3,8 @@
 # get DKMS version to variable PACKAGE_VERSION
 . dkms_ver.conf
 
+DKMS_TAR_NAME=media-build-${PACKAGE_VERSION}.dkms_src.tgz
+
 tar_dirs="backports "
 tar_dirs+="devel_scripts "
 tar_dirs+="linux "
@@ -18,5 +20,6 @@ tar_files+="INSTALL "
 tar_files+="Makefile "
 tar_files+="README_dkms "
 
-tar -czf media-build-${PACKAGE_VERSION}.dkms.tar.gz ${tar_dirs} ${tar_files}
+rm -f ${DKMS_TAR_NAME}
+tar -czf ${DKMS_TAR_NAME} ${tar_dirs} ${tar_files}
 
