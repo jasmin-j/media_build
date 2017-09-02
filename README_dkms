@@ -22,8 +22,8 @@ tree. This can be easily done by:
 
 
 Now we need to define the version of the DKMS package. This can be easily
-done in "dkms_ver.conf". The number can be any number required for the
-distribution you make the DKMS package for.
+done in "dkms_ver.conf". The version number can be any number required for
+the distribution you make the DKMS package for.
 Keep in mind, that also media_build needs to match the kernel source tree
 due to the backport patches, which need to match the Kernel sources. So
 the number should reflect the combination of media-tree and media-build.
@@ -47,12 +47,24 @@ will compile all the enabled modules for the given Kernel version.
 will remove the current directory from the DKMS system
 
 
-<FIXME>
-
-
+Just above is stated "all the enabled modules". There is a simple method to
+en/disable drivers.
 The files "??_any_name.inc" are included by "build_all.sh" and can be used to
 set/clear Kernel options and parameters. This is intended for distributions
 which may add new files according to their needs.
+
+
+The Debian DKMS tree on
+   https://github.com/jasmin-j/media_build_dkms
+requires a tar file containing the DKMS and Kernel tree. For that the script
+"create_dkms_tar.sh" is used. It creates
+   "media-build-<PACKAGE_VERSION>.dkms_src.tgz
+PACKAGE_VERSION is read from dkms_ver.conf, so you need to edit this file
+prior to the tar file creation.
+
+The created tar file can be now used together with the above mentioned Debian
+DKMS tree or with a similar packager.
+
 
 
     DKMS Branch naming in linux-media
@@ -65,7 +77,7 @@ With this approach it is not possible to make valid TAGs. On the other hand
 keeping mediatree/master-ddbridge consistant is too much effort. So we need
 stable branches as snapshots.
 
-The snapshots branche names have to start with "dkms/" followed by a number
+The snapshots branch names have to start with "dkms/" followed by a number
 which gets incremented with each new snapshot and finaly the date of the
 snapshot generation. The latter is required, because the commit dates are
 not suffcient to know when the snapshot has been taken.
@@ -74,3 +86,9 @@ Examples:
    dkms/0001-19_Aug_2017
    dkms/0002-28_Aug_2017
    dkms/0003-29_Aug_2017
+
+media-build uses the same branch naming. It may happen that media-build
+requires an update due to improofments. In that case the number from
+media-build might be higher than the one from linux-media. With the next
+change at linux-media this will be egalized.
+
