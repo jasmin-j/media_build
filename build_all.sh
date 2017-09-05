@@ -88,12 +88,14 @@ function make_v4l {
 		make ${v4l_clean}
 
 		if [ -d "${dkms_inst_dir}" -a "${do_dkms}" = "y" ] ; then
-			# additional security to be sure we remove the right directory
-			if [ -f "${dkms_inst_dir}/DKMS_INST" ] ; then
-				rm -rf ${dkms_inst_dir}
-			else
-				echo "Error: '${dkms_inst_dir}' is no DKMS install path!"
-				exit 4
+			if [ -d "${dkms_inst_dir}" ] ; then
+				# additional security to be sure we remove the right directory
+				if [ -f "${dkms_inst_dir}/DKMS_INST" ] ; then
+					rm -rf ${dkms_inst_dir}
+				else
+					echo "Error: '${dkms_inst_dir}' is no DKMS install path!"
+					exit 4
+				fi
 			fi
 		fi
 	else
