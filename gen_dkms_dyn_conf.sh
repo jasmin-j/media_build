@@ -120,7 +120,7 @@ fi
 # Now check, if the directory of the generated file
 # does already exist
 dkms_dyn_conf_dir=$(dirname ${dkms_dyn_conf})
-if [ ! -d ${dkms_dyn_conf_dir=} ] ; then
+if [ ! -d ${dkms_dyn_conf_dir} ] ; then
 	err_exit "Target directory for dynamic DKMS config doesn't exist!" ${err_dir_not_found}
 fi
 
