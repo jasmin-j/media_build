@@ -18,6 +18,7 @@ tar_files+="dkms_ver.conf "
 tar_files+="gen_dkms_dyn_conf.sh "
 tar_files+="INSTALL "
 tar_files+="Makefile "
+tar_files+="Makefile.dkms "
 tar_files+="README_dkms "
 
 rm -f ${DKMS_TAR_NAME}
