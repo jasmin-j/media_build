@@ -20,6 +20,8 @@ tar_files+="INSTALL "
 tar_files+="Makefile "
 tar_files+="Makefile.dkms "
 tar_files+="README_dkms "
+tar_files+="handle_updated_modules.sh "
+tar_files+="dkms_updated_modules.conf "
 
 rm -f ${DKMS_TAR_NAME}
 tar -czf ${DKMS_TAR_NAME} ${tar_dirs} ${tar_files}
